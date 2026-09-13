@@ -96,7 +96,7 @@ Server requirements: Automatic crafting, extended ingredient retrieval, and quan
 
 ## Appendix: Implementation Index
 
-| Section | Main implementation locations |
+| Section or feature | Implementation locations |
 | --- | --- |
 | Bookmarks and groups | `Gui/src/main/java/mezz/jei/gui/bookmarks/`; `Gui/src/main/java/mezz/jei/gui/overlay/bookmarks/` |
 | Recipe chains and supply/demand | `Gui/src/main/java/mezz/jei/gui/bookmarks/chain/`; bookmark tooltips and inventory providers |
@@ -108,9 +108,6 @@ Server requirements: Automatic crafting, extended ingredient retrieval, and quan
 | Collapsible rules | `Gui/src/main/java/mezz/jei/gui/collapsible/`; `gui/match/`; `gui/config/CollapsibleConfig.java` |
 | Sharing and information shortcuts | `Common/src/main/java/mezz/jei/common/chat/`; `Gui/src/main/java/mezz/jei/gui/chat/`; `gui/input/handlers/` |
 | Configuration and interface | `Gui/src/main/java/mezz/jei/gui/config/`; `gui/overlay/bookmarks/ScrollStepTextField.java` |
-
-| Feature | Implementation locations |
-| --- | --- |
 | Pinned bookmark recipe previews and transfer within previews | `Gui/src/main/java/mezz/jei/gui/overlay/bookmarks/BookmarkPreviewTooltipController.java`, `BookmarkPreviewTooltip.java` |
 | Extended bookmark and favorite data persistence | `Gui/src/main/java/mezz/jei/gui/config/BookmarkJsonConfig.java`, `FavoriteRecipeConfig.java` |
 | Multiple output targets and saved favorite inputs | `Gui/src/main/java/mezz/jei/gui/recipes/RecipeFavoriteButton.java`, `FavoriteRecipeTargetSelector.java` |
