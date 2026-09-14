@@ -76,15 +76,17 @@ public class BookmarkOverlayRenderer {
 		@Nullable BookmarkSortDragState sortDragState
 	) {
 		BookmarkOverlayLayout.PanelSnapshot panelSnapshot = overlay.getGroupPanelSnapshotForRendering();
-		List<BookmarkPanelLayout.PanelSlot<IBookmark>> panelSlotsForPreview = panelSnapshot.panelSlots();
 		List<GroupPanelSlot> sourcePanelSlots = panelSnapshot.groupPanelSlots();
 		List<GroupPanelSlot> panelSlots = sourcePanelSlots;
 		if (groupPanelDrag != null) {
-			panelSlots = groupPanelDrag.getPreviewGroupPanelSlots(panelSlotsForPreview, panelSlots);
+			panelSlots = groupPanelDrag.getPreviewGroupPanelSlots(panelSlots);
 		}
 		List<BookmarkPanelLayout.RowSlot<IBookmark>> rowSlots = BookmarkOverlayLayout.toRowSlots(panelSlots);
 		boolean hasDragPreview = panelSlots != sourcePanelSlots || sortDragState != null && sortDragState.isActive();
 		BookmarkOverlayLayout.BoundaryConnections boundaryConnections = !hasDragPreview ? panelSnapshot.boundaryConnections() : BookmarkOverlayLayout.BoundaryConnections.NONE;
+		if (groupPanelDrag != null && panelSlots != sourcePanelSlots) {
+			boundaryConnections = groupPanelDrag.boundaries(panelSlots);
+		}
 		for (int i = 0; i < panelSlots.size(); i++) {
 			GroupPanelSlot slot = panelSlots.get(i);
 			boolean connectedToPrevious = BookmarkPanelLayout.isConnectedToPreviousRow(rowSlots, i) ||

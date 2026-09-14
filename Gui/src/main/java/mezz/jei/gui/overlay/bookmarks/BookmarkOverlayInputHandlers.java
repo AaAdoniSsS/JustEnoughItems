@@ -243,6 +243,11 @@ public final class BookmarkOverlayInputHandlers {
 
 		@Override
 		public Optional<IUserInputHandler> handleMouseScrolled(double mouseX, double mouseY, double scrollDeltaX, double scrollDelta) {
+			var drag = overlay.getGroupPanelDrag();
+			if (drag != null && !drag.isDropMode()) {
+				drag.scroll(scrollDeltaX, scrollDelta, mouseY);
+				return Optional.of(this);
+			}
 			if (overlay.getScrollStepArea().contains(mouseX, mouseY)) {
 				if (scrollDelta == 0) {
 					return Optional.empty();

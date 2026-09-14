@@ -5,6 +5,8 @@ import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.common.Internal;
 import mezz.jei.common.util.ImmutableRect2i;
 import mezz.jei.gui.bookmarks.IBookmark;
+import mezz.jei.gui.bookmarks.BookmarkRowLayout;
+import mezz.jei.gui.bookmarks.BookmarkGroupManager;
 import mezz.jei.gui.bookmarks.hotkeys.BookmarkHotkeyAction;
 import mezz.jei.gui.ghost.GhostIngredientDrag;
 import mezz.jei.gui.input.MouseUtil;
@@ -17,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
 
 class GroupPanelDrag {
 	private static final int GROUPING_PREVIEW_GROUP_ID = -1;
@@ -33,6 +37,13 @@ class GroupPanelDrag {
 	private final int dragOffsetX;
 	private final int dragOffsetY;
 	private @Nullable GroupPanelSlot endSlot;
+	private final BookmarkRowLayout.RowLayout rows;
+	private final List<BookmarkPanelLayout.PanelSlot<IBookmark>> slots;
+	private final BookmarkPanelLayout.RowSlot<IBookmark> start;
+	private @Nullable BookmarkGroupingPlan plan;
+	private @Nullable BookmarkPanelLayout.RowSlot<IBookmark> globalEnd;
+	private Set<IBookmark> selected = Set.of();
+	private Set<IBookmark> released = Set.of();
 
 	public GroupPanelDrag(
 		BookmarkOverlay overlay,
@@ -60,6 +71,11 @@ class GroupPanelDrag {
 		this.startY = MouseUtil.getY();
 		this.dragOffsetX = startSlot.area().getX() - (int) Math.round(this.startX);
 		this.dragOffsetY = startSlot.area().getY() - (int) Math.round(this.startY);
+		var contents = overlay.getContents();
+		this.rows = BookmarkRowLayout.RowLayout.create(contents.getUsableColumnCount(), contents.getUsableColumnsPerRow());
+		this.slots = dropMode ? List.of() : BookmarkPanelLayout.globalSlots(
+			overlay.getBookmarkList().getDisplaySlots(contents.getUsableColumnCount(), contents.getUsableColumnsPerRow()), rows);
+		this.start = globalRow(startSlot);
 	}
 
 	public boolean isDropMode() {
@@ -67,7 +83,6 @@ class GroupPanelDrag {
 	}
 
 	public List<GroupPanelSlot> getPreviewGroupPanelSlots(
-		List<BookmarkPanelLayout.PanelSlot<IBookmark>> panelSlots,
 		List<GroupPanelSlot> groupPanelSlots
 	) {
 		if (dropMode) {
@@ -78,17 +93,31 @@ class GroupPanelDrag {
 			return groupPanelSlots;
 		}
 
-		List<BookmarkPanelLayout.RowSlot<IBookmark>> previewRows = BookmarkPanelLayout.createGroupingPreviewRows(
-			panelSlots,
-			BookmarkOverlayLayout.toRowSlots(groupPanelSlots),
-			BookmarkOverlayLayout.toRowSlot(startSlot),
-			BookmarkOverlayLayout.toRowSlot(this.endSlot),
-			exclude,
-			GROUPING_PREVIEW_GROUP_ID
-		);
-		return previewRows.stream()
-			.map(overlay::toGroupPanelSlot)
+		return groupPanelSlots.stream().map(row -> new GroupPanelSlot(row.bookmark(),
+			previewGroup(row.bookmark(), row.groupId()), row.area()))
 			.toList();
+	}
+
+	private int previewGroup(IBookmark item, int groupId) {
+		if (selected.contains(item)) {
+			return exclude ? BookmarkGroupManager.DEFAULT_GROUP_ID : start.groupId() == BookmarkGroupManager.DEFAULT_GROUP_ID ? GROUPING_PREVIEW_GROUP_ID : start.groupId();
+		}
+		return released.contains(item) ? BookmarkGroupManager.DEFAULT_GROUP_ID : groupId;
+	}
+
+	BookmarkOverlayLayout.BoundaryConnections boundaries(List<GroupPanelSlot> visible) {
+		if (plan == null || visible.isEmpty()) {
+			return BookmarkOverlayLayout.BoundaryConnections.NONE;
+		}
+		int first = globalRow(visible.getFirst()).area().getY();
+		int last = globalRow(visible.getLast()).area().getY();
+		var before = slots.stream().filter(slot -> slot.area().getY() < first).reduce((a, b) -> b);
+		var after = slots.stream().filter(slot -> slot.area().getY() > last).findFirst();
+		return new BookmarkOverlayLayout.BoundaryConnections(
+			visible.getFirst().groupId() != BookmarkGroupManager.DEFAULT_GROUP_ID && before
+				.map(slot -> previewGroup(slot.item(), slot.groupId()) == visible.getFirst().groupId()).orElse(false),
+			visible.getLast().groupId() != BookmarkGroupManager.DEFAULT_GROUP_ID && after
+				.map(slot -> previewGroup(slot.item(), slot.groupId()) == visible.getLast().groupId()).orElse(false));
 	}
 
 	public boolean complete(UserInput input) {
@@ -127,12 +156,6 @@ class GroupPanelDrag {
 			}
 			return changed;
 		}
-		BookmarkGroupingPlan plan = BookmarkGroupingPlan.create(
-			overlay.getPanelSlots(),
-			BookmarkOverlayLayout.toRowSlot(startSlot),
-			BookmarkOverlayLayout.toRowSlot(this.endSlot),
-			exclude
-		);
 		if (plan.bookmarks().isEmpty()) {
 			return false;
 		}
@@ -215,15 +238,40 @@ class GroupPanelDrag {
 			return;
 		}
 		GroupPanelSlot currentEndSlot = hoveredSlot.get();
+		var end = globalRow(currentEndSlot);
 		long elapsedMillis = System.currentTimeMillis() - startedAtMillis;
-		if (BookmarkPanelLayout.shouldUpdateDragEnd(
+		if (end.area().getY() != start.area().getY() || BookmarkPanelLayout.shouldUpdateDragEnd(
 			BookmarkOverlayLayout.toRowSlot(startSlot),
 			this.endSlot == null ? null : BookmarkOverlayLayout.toRowSlot(this.endSlot),
 			mouseY,
 			elapsedMillis,
 			GROUP_PANEL_DRAG_THRESHOLD_MS
-		)) {
+			)
+		) {
+			if (endSlot == null || !end.equals(globalEnd)) {
+				plan = BookmarkGroupingPlan.create(slots, start, end, exclude);
+				selected = new HashSet<>(plan.bookmarks());
+				released = new HashSet<>(plan.releasedBookmarks());
+				globalEnd = end;
+			}
 			this.endSlot = currentEndSlot;
 		}
+	}
+
+	private BookmarkPanelLayout.RowSlot<IBookmark> globalRow(GroupPanelSlot slot) {
+		var contents = overlay.getContents();
+		var visible = contents.getSlots().toList();
+		int index = 0;
+		while (index < visible.size() && visible.get(index).getArea().getY() != slot.area().getY()) {
+			index++;
+		}
+		int row = BookmarkRowLayout.rowStart(contents.getFirstItemIndex() + index, rows);
+		return new BookmarkPanelLayout.RowSlot<>(slot.bookmark(), slot.groupId(), new ImmutableRect2i(0, row, 1, 1));
+	}
+
+	void scroll(double deltaX, double deltaY, double mouseY) {
+		var area = overlay.getContents().getIngredientGridArea();
+		overlay.getContents().createInputHandler().handleMouseScrolled(area.getX() + 1, area.getY() + 1, deltaX, deltaY);
+		updateEndSlot(mouseY);
 	}
 }
