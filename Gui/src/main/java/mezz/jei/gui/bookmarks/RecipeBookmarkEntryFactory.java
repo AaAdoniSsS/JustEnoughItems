@@ -177,14 +177,15 @@ final class RecipeBookmarkEntryFactory {
 		IBookmark bookmark = new RecipeBookmark<>(recipeCategory, recipe, recipeUid, bookmarkIngredient, RecipeIngredientRole.INPUT, equalityScope);
 		long factor = virtualInput.programmedCircuit() ? 0 : BookmarkIngredientAmountResolver.getAmount(ingredient, ingredientManager);
 		BookmarkItemMetadata metadata = BookmarkItemMetadataFactory.createForSyntheticRecipeInput(
-			BookmarkGroupManager.DEFAULT_GROUP_ID,
-			recipeCategory.getRecipeType().getUid(),
-			recipeUid,
-			BookmarkItemType.NONCONSUMABLE,
-			ingredient,
-			ingredientManager,
-			factor
-		);
+				BookmarkGroupManager.DEFAULT_GROUP_ID,
+				recipeCategory.getRecipeType().getUid(),
+				recipeUid,
+				BookmarkItemType.NONCONSUMABLE,
+				ingredient,
+				ingredientManager,
+				factor
+			)
+			.withMultiplier(preserveAmount ? 1 : 0);
 		return new RecipeBookmarkEntry(bookmark, metadata);
 	}
 
@@ -250,15 +251,16 @@ final class RecipeBookmarkEntryFactory {
 			.anyMatch(candidate -> sameIngredient(ingredient, candidate));
 		BookmarkItemType type = virtualInput ? BookmarkItemType.NONCONSUMABLE : BookmarkItemType.fromRecipeRole(role);
 		BookmarkItemMetadata metadata = BookmarkItemMetadataFactory.createForRecipeSlotWithFactor(
-			BookmarkGroupManager.DEFAULT_GROUP_ID,
-			recipeCategory,
-			recipeUid,
-			type,
-			slotView,
-			ingredient,
-			ingredientManager,
-			factor
-		);
+				BookmarkGroupManager.DEFAULT_GROUP_ID,
+				recipeCategory,
+				recipeUid,
+				type,
+				slotView,
+				ingredient,
+				ingredientManager,
+				factor
+			)
+			.withMultiplier(preserveAmount ? 1 : 0);
 		if (lockedInputPermutation != null) {
 			metadata = metadata.withPermutations(Set.of(lockedInputPermutation));
 		}

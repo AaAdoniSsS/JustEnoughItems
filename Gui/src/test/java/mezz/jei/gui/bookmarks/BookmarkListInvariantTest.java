@@ -23,6 +23,10 @@ import mezz.jei.gui.overlay.bookmarks.BookmarkItemMovePlan;
 import mezz.jei.gui.overlay.bookmarks.BookmarkPanelLayout;
 import mezz.jei.gui.overlay.elements.LayoutPlaceholderElement;
 import mezz.jei.gui.util.FocusUtil;
+import mezz.jei.gui.bookmarks.chain.RecipeChainInput;
+import mezz.jei.gui.bookmarks.chain.RecipeChainMath;
+import mezz.jei.test.gui.fixtures.ItemStackIngredientTestFixtures;
+import mezz.jei.test.gui.fixtures.RecipeLayoutTestFixtures;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -39,6 +43,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -70,6 +75,38 @@ public class BookmarkListInvariantTest {
 		bookmarks.moveBookmarks(List.of(loose), input, BookmarkGroupManager.DEFAULT_GROUP_ID, 0);
 
 		Assertions.assertEquals(List.of(result, input, loose), bookmarks.getBookmarks());
+	}
+
+	@ParameterizedTest
+	@ValueSource(booleans = {false, true})
+	public void preservesRecipeDemand(boolean counted) {
+		var factory = new RecipeBookmarkEntryFactory(ItemStackIngredientTestFixtures.ingredientManager());
+		var type = new RecipeType<>(RECIPE_TYPE, Object.class);
+		List<RecipeChainInput> inputs = new ArrayList<>();
+		List<Item> products = List.of(Items.CRAFTING_TABLE, Items.OAK_PLANKS, Items.OAK_LOG);
+		List<Item> materials = List.of(Items.OAK_PLANKS, Items.OAK_LOG, Items.STICK);
+		for (int i = 0; i < products.size(); i++) {
+			var layout = RecipeLayoutTestFixtures.singleIngredientLayout(type, new Object(),
+				ResourceLocation.parse("test:chain_" + i),
+				List.of(ItemStackIngredientTestFixtures.item(materials.get(i))),
+				List.of(ItemStackIngredientTestFixtures.item(products.get(i))));
+			var entries = factory.createRecipeBookmarkEntries(new RecipeLayoutProjection(layout), counted, null);
+			Assertions.assertEquals(2, entries.size());
+			for (var entry : entries) {
+				Assertions.assertEquals(counted ? 1 : 0, entry.metadata().multiplier());
+				inputs.add(new RecipeChainInput(inputs.size(), entry.metadata()));
+			}
+		}
+		var before = RecipeChainMath.refresh(inputs, Set.of());
+		Assertions.assertEquals(counted ? 1 : 0, before.calculatedItems().get(4).calculatedMultiplier());
+		var root = inputs.getFirst();
+		inputs.set(0, new RecipeChainInput(root.index(), root.metadata().withMultiplier(1)));
+		Assertions.assertEquals(1, RecipeChainMath.refresh(inputs, Set.of()).calculatedItems().get(4).calculatedMultiplier());
+		var remaining = inputs.stream()
+			.filter(input -> !ResourceLocation.parse("test:chain_1").equals(input.metadata().recipeUid()))
+			.toList();
+		var after = RecipeChainMath.refresh(remaining, Set.of());
+		Assertions.assertEquals(counted ? 1 : 0, after.calculatedItems().get(4).calculatedMultiplier());
 	}
 
 	@Test

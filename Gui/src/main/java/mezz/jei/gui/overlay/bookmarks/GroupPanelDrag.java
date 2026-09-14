@@ -219,7 +219,7 @@ class GroupPanelDrag {
 		if (BookmarkPanelLayout.shouldUpdateDragEnd(
 			BookmarkOverlayLayout.toRowSlot(startSlot),
 			this.endSlot == null ? null : BookmarkOverlayLayout.toRowSlot(this.endSlot),
-			BookmarkOverlayLayout.toRowSlot(currentEndSlot),
+			mouseY,
 			elapsedMillis,
 			GROUP_PANEL_DRAG_THRESHOLD_MS
 		)) {

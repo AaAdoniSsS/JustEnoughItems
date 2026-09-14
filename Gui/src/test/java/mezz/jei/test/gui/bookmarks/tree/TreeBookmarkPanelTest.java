@@ -105,10 +105,10 @@ class TreeBookmarkPanelTest {
 		assertFalse(scroll(book, input, 1, false, false, false, 16));
 		assertEquals(version, book.getChangeVersion());
 		assertTrue(scroll(book, input, 1, true, false, false, 16));
-		assertEquals(2, book.getBookmarkMetadata(input).multiplier());
-		assertEquals(1, book.getBookmarkMetadata(other).multiplier());
+		assertEquals(1, book.getBookmarkMetadata(input).multiplier());
+		assertEquals(0, book.getBookmarkMetadata(other).multiplier());
 		assertTrue(scroll(book, input, 1, true, true, false, 16));
-		assertEquals(18, book.getBookmarkMetadata(input).multiplier());
+		assertEquals(17, book.getBookmarkMetadata(input).multiplier());
 		assertTrue(scroll(book, input, 1, false, true, false, 16));
 		assertTrue(book.getBookmarkMetadata(input).type().isNonConsumable());
 		assertEquals(1, book.getBookmarkMetadata(input).amount());
@@ -149,7 +149,7 @@ class TreeBookmarkPanelTest {
 			assertSame(target, hovered);
 			assertTrue(scroll(book, hovered, 1, false, true, false, 64));
 			assertEquals(i % 2 == 0, book.getBookmarkMetadata(target).type().isNonConsumable());
-			assertEquals(1, book.getBookmarkMetadata(target).amount());
+			assertEquals(i % 2 == 0 ? 1 : 0, book.getBookmarkMetadata(target).amount());
 		}
 	}
 
@@ -163,7 +163,7 @@ class TreeBookmarkPanelTest {
 				book.getBookmarkMetadata(value).type().isGraphInput())
 			.findFirst().orElseThrow();
 		int position = findPosition(book, group, target);
-		long expected = 1;
+		long expected = 0;
 		for (boolean alt : List.of(false, true, false, true)) {
 			var hovered = getHoveredBookmark(book, group, position);
 			assertSame(target, hovered);
@@ -171,7 +171,7 @@ class TreeBookmarkPanelTest {
 			expected += alt ? 16 : 1;
 			for (var bookmark : book.getBookmarks()) {
 				var metadata = book.getBookmarkMetadata(bookmark);
-				assertEquals(metadata.recipeUid().getPath().equals("b") ? expected : 1, metadata.multiplier());
+				assertEquals(metadata.recipeUid().getPath().equals("b") ? expected : 0, metadata.multiplier());
 			}
 			assertTrue(book.getBookmarkGroups().stream().filter(value -> value.id() == group).findFirst().orElseThrow().collapsed());
 		}

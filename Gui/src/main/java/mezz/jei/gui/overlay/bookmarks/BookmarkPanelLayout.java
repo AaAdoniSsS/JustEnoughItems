@@ -185,11 +185,11 @@ public final class BookmarkPanelLayout {
 	public static <T> boolean shouldUpdateDragEnd(
 		RowSlot<T> start,
 		@Nullable RowSlot<T> existingEnd,
-		RowSlot<T> current,
+		double mouseY,
 		long elapsedMillis,
 		long thresholdMillis
 	) {
-		boolean rowChanged = current.area().getY() != start.area().getY();
+		boolean rowChanged = mouseY < start.area().getY() || mouseY >= start.area().getY() + start.area().getHeight();
 		boolean heldLongEnough = elapsedMillis >= thresholdMillis;
 		return existingEnd != null || rowChanged || heldLongEnough;
 	}
