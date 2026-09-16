@@ -67,6 +67,7 @@ public final class RecipeTreeScreen extends Screen {
 	private @Nullable RecipeTreeSidebarLayout<SummaryEntry> sidebarLayout;
 	private final BookmarkCandidateTooltipState candidateTooltips = new BookmarkCandidateTooltipState();
 	private final UserInputRouter candidateInputs;
+	private final RecipeTreeSidebarClick<ITypedIngredient<?>> sidebarClicks = new RecipeTreeSidebarClick<>();
 	private @Nullable RecipeTreeLayout.Node selected;
 	private @Nullable RecipeTreePreview preview;
 	private @Nullable RecipeTreeBookmarkPanel bookmarkPanel;
@@ -116,6 +117,7 @@ public final class RecipeTreeScreen extends Screen {
 
 	@Override
 	protected void init() {
+		sidebarClicks.reset();
 		prepareBookmarkPanel();
 		var back = addRenderableWidget(new Button(5, 6, 20, 20, Component.literal("<"), button -> onClose(), narration -> narration.get()) {
 			private boolean pressed;
@@ -313,6 +315,7 @@ public final class RecipeTreeScreen extends Screen {
 	}
 
 	private void refresh() {
+		sidebarClicks.cancel();
 		var expansion = tree != null ? tree.captureExpansion(selected) : pendingViewState == null ? null : pendingViewState.expansion();
 		// The left panel can select a recipe outside the instantiated tree branches.
 		var detachedRecipe = selected != null && expansion != null && expansion.selected() < 0 ? selected.target().metadata().recipeUid() : null;
@@ -427,6 +430,18 @@ public final class RecipeTreeScreen extends Screen {
 		}
 		return sidebarLayout().entryAt(x - viewportRight() - 6, y - (TOP + 26 + previewHeight() - sidebarScroll)).orElse(null);
 	}
+
+	private @Nullable SidebarLookup sidebarLookupAt(double x, double y) {
+		var slot = previewSlotAt(x, y);
+		if (slot.isPresent()) {
+			return slot.get().slot().getDisplayedIngredient()
+				.map(ingredient -> new SidebarLookup(slot.get().slot(), ingredient)).orElse(null);
+		}
+		var entry = sidebarEntryAt(x, y);
+		return entry == null || entry.stack() == null ? null : new SidebarLookup(entry, entry.stack().typed);
+	}
+
+	private record SidebarLookup(Object identity, ITypedIngredient<?> ingredient) {}
 
 	private RecipeTreeSidebarLayout<SummaryEntry> sidebarLayout() {
 		int availableWidth = Math.max(1, width - viewportRight() - 12);
@@ -682,6 +697,7 @@ public final class RecipeTreeScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(double x, double y, int button) {
+		sidebarClicks.reset();
 		if (handleCandidateClick(x, y, button, InputType.SIMULATE)) {
 			return true;
 		}
@@ -689,6 +705,12 @@ public final class RecipeTreeScreen extends Screen {
 			searchBox.setFocused(false);
 		}
 		if (super.mouseClicked(x, y, button)) {
+			return true;
+		}
+		var sidebarTarget = sidebarLookupAt(x, y);
+		if (sidebarTarget != null && sidebarClicks.press(sidebarTarget.identity(), sidebarTarget.ingredient(), x, y, button,
+			hasShiftDown() || hasControlDown() || hasAltDown())
+		) {
 			return true;
 		}
 		if (x < viewportLeft() && y >= TOP && bookmarkPanel != null) {
@@ -737,6 +759,7 @@ public final class RecipeTreeScreen extends Screen {
 
 	@Override
 	public boolean mouseDragged(double x, double y, int button, double dx, double dy) {
+		sidebarClicks.move(x, y);
 		if (candidateInputs.handleMouseDragged(x, y, InputConstants.Type.MOUSE.getOrCreate(button), dx, dy)) {
 			return true;
 		}
@@ -754,6 +777,14 @@ public final class RecipeTreeScreen extends Screen {
 	@Override
 	public boolean mouseReleased(double x, double y, int button) {
 		if (handleCandidateClick(x, y, button, InputType.EXECUTE)) {
+			sidebarClicks.reset();
+			return true;
+		}
+		if (hasShiftDown() || hasControlDown() || hasAltDown()) {
+			sidebarClicks.cancel();
+		}
+		var sidebarTarget = sidebarLookupAt(x, y);
+		if (sidebarClicks.release(sidebarTarget == null ? null : sidebarTarget.identity(), x, y, button, this::showIngredient)) {
 			return true;
 		}
 		if (bookmarkPanel != null) {
@@ -765,6 +796,7 @@ public final class RecipeTreeScreen extends Screen {
 
 	@Override
 	public boolean mouseScrolled(double x, double y, double horizontal, double vertical) {
+		sidebarClicks.cancel();
 		if (candidateInputs.handleMouseScrolled(x, y, horizontal, vertical)) {
 			return true;
 		}
@@ -827,18 +859,22 @@ public final class RecipeTreeScreen extends Screen {
 				bookmarks.addIngredientBookmark(ingredient.get());
 			}
 		} else {
-			var runtime = Internal.getJeiRuntime();
-			var recipesGui = runtime.getRecipesGui();
-			Screen previousParent = recipesGui.getParentScreen().orElse(null);
-			var roles = action.get() == RecipeTreeInput.SHOW_RECIPE ? List.of(RecipeIngredientRole.OUTPUT) : List.of(RecipeIngredientRole.INPUT, RecipeIngredientRole.CATALYST);
-			var focusUtil = new FocusUtil(runtime.getJeiHelpers().getFocusFactory(), Internal.getJeiClientConfigs().getClientConfig(), ingredients);
-			recipesGui.show(focusUtil.createFocuses(ingredient.get(), roles));
-			// RecipesGui is a singleton: do not make it both our parent and our child after an R/U lookup.
-			if (minecraft.screen == recipesGui && parent == recipesGui) {
-				parent = previousParent;
-			}
+			showIngredient(ingredient.get(), action.get());
 		}
 		return true;
+	}
+
+	private void showIngredient(ITypedIngredient<?> ingredient, RecipeTreeInput action) {
+		var runtime = Internal.getJeiRuntime();
+		var recipesGui = runtime.getRecipesGui();
+		Screen previousParent = recipesGui.getParentScreen().orElse(null);
+		var roles = action == RecipeTreeInput.SHOW_RECIPE ? List.of(RecipeIngredientRole.OUTPUT) : List.of(RecipeIngredientRole.INPUT, RecipeIngredientRole.CATALYST);
+		var focusUtil = new FocusUtil(runtime.getJeiHelpers().getFocusFactory(), Internal.getJeiClientConfigs().getClientConfig(), ingredients);
+		recipesGui.show(focusUtil.createFocuses(ingredient, roles));
+		// RecipesGui is a singleton: do not make it both our parent and our child after an R/U lookup.
+		if (minecraft.screen == recipesGui && parent == recipesGui) {
+			parent = previousParent;
+		}
 	}
 
 	private Optional<ITypedIngredient<?>> hoveredIngredient(double x, double y) {
@@ -861,6 +897,7 @@ public final class RecipeTreeScreen extends Screen {
 
 	@Override
 	public void removed() {
+		sidebarClicks.reset();
 		candidateInputs.handleGuiChange();
 		cacheViewState();
 		super.removed();
