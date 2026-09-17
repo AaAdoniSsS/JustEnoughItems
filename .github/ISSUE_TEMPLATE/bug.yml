@@ -1,96 +1,150 @@
 name: Bug report
-description: >-
-  Please use this template when you have encountered a bug in JEI.  
-  If the issue seems to affect only one mod, please report to them first instead of here.
+description: Report functionality, visual, or compatibility issues with JEIU. For crashes, use the crash report template.
 title: '[Bug]: '
 body:
-  - type: textarea
-    id: repro_steps
+  - type: markdown
     attributes:
-      label: Steps to Reproduce the Bug
-      description: Please explain what we need to do to cause the bug.
-      placeholder: >-
-        Example:  
-        
-        1. Hold Shift   
-        2. Click the anvil in the JEI ingredient list on the left side.
+      value: |
+        This repository maintains JEIU, an unofficial fork of JEI. Report JEIU-specific issues here.
+        Provide enough detail to reproduce the issue. Source code analysis or identifying the root cause is not required.
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have searched existing issues and found no duplicate. If the issue is already reported, I will add information to that report instead.
+          required: true
+        - label: I confirm that I am using JEIU, not official JEI.
+          required: true
+
+  - type: input
+    id: jeiu_version
+    attributes:
+      label: JEIU version
+      description: Enter the full version number or JAR filename, not just "latest".
+      placeholder: JEIunofficial-1.21.1-neoforge-19.54.0.426.jar
     validations:
       required: true
-  - type: textarea
-    id: expected_behavior
+
+  - type: input
+    id: minecraft_version
     attributes:
-      label: Expected Behavior
-      description: >-
-        Please explain what should happen when you follow the steps, if the bug
-        were fixed.
-      placeholder: >-
-        Example:  
-        Following the steps to reproduce the bug, JEI should just show
-        the anvil recipe.
+      label: Minecraft version
+      placeholder: 1.21.1
     validations:
       required: true
+
+  - type: input
+    id: loader_version
+    attributes:
+      label: Mod loader and version
+      description: Include both the loader name and its full version number.
+      placeholder: NeoForge 21.1.xxx or Forge 47.x.x
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Game environment
+      options:
+        - Singleplayer
+        - Multiplayer server
+        - LAN multiplayer
+        - Other (describe in Additional information)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: server_installation
+    attributes:
+      label: Is JEIU installed on the server?
+      description: Leave blank for singleplayer. Select "Unknown" if you do not know the server setup.
+      options:
+        - Installed (include the server's JEIU version in Additional information)
+        - Not installed
+        - Unknown
+
+  - type: dropdown
+    id: latest_version
+    attributes:
+      label: Have you tested the latest JEIU release for your Minecraft version and loader?
+      description: Updating your modpack is not required to submit a report.
+      options:
+        - Tested, the issue still occurs
+        - Tested, the issue no longer occurs
+        - Not tested or unsure
+
   - type: textarea
     id: actual_behavior
     attributes:
-      label: Actual Behavior
-      description: >-
-        Please briefly explain what actually happens when you follow the steps,
-        because of the bug.
-      placeholder: >-
-        Example:  
-        Nothing happens, the anvil recipe isn't shown.
+      label: Actual behavior
+      description: Describe what happens, including the items, recipes, or screens involved. Screenshots can be attached here.
+      placeholder: Holding Shift while hovering over a recipe in the lookup history shows two overlapping tooltips.
     validations:
       required: true
-  - type: input
-    id: modpack_url
-    attributes:
-      label: Mod Pack URL (Optional)
-      description: >-
-        If you're playing with a mod pack, please include a link to it here.
-      placeholder: http://www.Biggest-Modpack-Ever.com
-  - type: input
-    id: modpack_version
-    attributes:
-      label: Mod Pack Version (Optional)
-      description: >-
-        If you're playing with a mod pack, please include its version here.
-      placeholder: 0.0.1 Alpha
+
   - type: textarea
-    id: notes
+    id: expected_behavior
     attributes:
-      label: Extra Notes (Optional)
-      description: >-
-        Optionally, please include anything else you'd like to say about the bug.
-      placeholder: >-
-        Example:  
-        You can work around this bug for now by avoiding holding shift.
+      label: Expected behavior
+      description: Describe what should happen. For quantity issues, include both the actual and expected amounts.
+      placeholder: Only one pinned recipe preview should appear, allowing me to move the cursor into it to inspect ingredients.
     validations:
-      required: false
-  - type: markdown
+      required: true
+
+  - type: textarea
+    id: reproduction
     attributes:
-      value: >-
-        ## Sharing your `latest.log`
+      label: Steps to reproduce
+      description: |
+        Specify the starting screen, cursor position, keys pressed, and order of actions. Use specific items where possible.
+        Intermittent issues can also be reported. Describe how often the issue occurs and what you were doing at the time.
+        For visual or interaction issues, a short video showing the full sequence is recommended.
+      placeholder: |
+        1. Open the ... screen.
+        2. Bookmark the recipe for ... and click the bookmark to view it.
+        3. Hover over ... in the lookup history and hold ... .
+        4. ... happens every time / occasionally.
+    validations:
+      required: true
 
-        In order to diagnose a bug, we will need to see your `latest.log`.  
-
-        To share your `latest.log` here, please follow these steps:
-
-
-        1. If you don't have it already, find your `latest.log` file.  
-
-        a. [Find your minecraft
-        folder](https://stickypiston.co/account/knowledgebase/130/How-do-I-find-my-Minecraft-Folder.html)   
-
-        b. In the minecraft folder, go into the `logs` folder and find the
-        `latest.log` file.
-
-        1. Create a Gist from the `latest.log`, and copy the url.  
-
-        [Click here for instructions on creating a
-        Gist](https://gist.github.com/mezz/c3f0931344d81afd366e0d85a8ed1031)
-  - type: input
-    id: crashlog
+  - type: textarea
+    id: affected_mods
     attributes:
-      label: latest.log
-      description: Please paste the url to the gist containing your `latest.log` file.
-      placeholder: https://gist.github.com/<your_user_name>/<gist_id>
+      label: Related mods and versions (optional)
+      description: List the mods involved and their versions, or provide your mod list if unsure. You do not need to identify which mod is responsible.
+
+  - type: textarea
+    id: modpack
+    attributes:
+      label: Modpack information (optional)
+      description: Include the name, version, and download link. Note any added or removed mods, or changes to configs or recipes.
+
+  - type: dropdown
+    id: official_jei
+    attributes:
+      label: Comparison with official JEI (optional)
+      description: Replacing JEIU is not required to submit a report. If you tested official JEI, include its version in Additional information.
+      options:
+        - Works with official JEI; the issue only occurs with JEIU
+        - The same issue occurs with official JEI
+        - Not tested
+        - JEIU-specific feature; no direct comparison is possible
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Logs and attachments (optional)
+      description: |
+        Upload logs/latest.log from the session where the issue occurred, or provide a log link. A launcher error dialog alone is not sufficient.
+        For bookmark, recipe chain, or collapsible group issues, also consider attaching the relevant bookmark data, rule files, or configs.
+        Drag files, screenshots, or videos into this field. Unsupported file types can be packaged as a ZIP.
+        Check attachments for private information before uploading. Redact anything you do not want to share while preserving the error context where possible.
+
+  - type: textarea
+    id: additional_information
+    attributes:
+      label: Additional information (optional)
+      description: Include troubleshooting steps, workarounds, behavior in other versions, or possible causes. Source code analysis is not required.
