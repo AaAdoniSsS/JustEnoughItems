@@ -1,76 +1,157 @@
 name: Crash report
-description: >-
-  Please use this template when JEI has caused your game client to crash.  
-  If the issue seems to affect only one mod, please report to them first instead of here.
+description: Report crashes or startup failures when using JEIU, on the client or server.
 title: '[Crash]: '
 body:
-  - type: textarea
-    id: repro_steps
-    attributes:
-      label: Steps to Reproduce the Crash
-      description: Please explain what we need to do to cause the crash.
-      placeholder: >-
-        Example:  
-        
-        1. Open the Brewing Stand GUI.  
-        3. Click the JEI config button.
-    validations:
-      required: true
-  - type: input
-    id: modpack_url
-    attributes:
-      label: Mod Pack URL (Optional)
-      description: >-
-        If you're playing with a mod pack, please include a link to it here.
-      placeholder: http://www.Biggest-Modpack-Ever.com
-  - type: input
-    id: modpack_version
-    attributes:
-      label: Mod Pack Version (Optional)
-      description: >-
-        If you're playing with a mod pack, please include its version here.
-      placeholder: 0.0.1 Alpha
-  - type: textarea
-    id: notes
-    attributes:
-      label: Extra Notes (Optional)
-      description: >-
-        Optionally, please include anything else you'd like to say about the crash.
-      placeholder: >-
-        Example:  
-        I warned everyone on my server not to do this, so nobody is crashing any more. 
-        I just thought I should let you know so you can fix it, thanks!
-    validations:
-      required: false
   - type: markdown
     attributes:
-      value: >-
-        ## Sharing your Crash Report
-        
-        In order to diagnose a crash, we will need to see your client crash
-        report.  
+      value: |
+        This repository maintains JEIU, an unofficial fork of JEI.
+        You do not need to identify the root cause before reporting a crash. Include logs from the session where it occurred.
 
-        To share your client crash report here, please follow these steps:
-
-
-        1. If you don't have it already, find your client crash report file.  
-
-        a. [Find your minecraft
-        folder](https://stickypiston.co/account/knowledgebase/130/How-do-I-find-my-Minecraft-Folder.html)   
-
-        b. In the minecraft folder, go into the `crash-reports` folder and find
-        the most recent client crash report file.
-
-        1. Create a Gist from the client crash report file, and copy the url.  
-
-        [Click here for instructions on creating a
-        Gist](https://gist.github.com/mezz/c3f0931344d81afd366e0d85a8ed1031)
-  - type: input
-    id: crashlog
+  - type: checkboxes
+    id: confirmation
     attributes:
-      label: Crash Report
-      description: >-
-        Please paste the url to the gist containing your client crash report.
-      placeholder: https://gist.github.com/<your_user_name>/<gist_id>
+      label: Before submitting
+      options:
+        - label: I have searched existing issues and found no duplicate. If the issue is already reported, I will add information to that report instead.
+          required: true
+        - label: I confirm that I am using JEIU, not official JEI.
+          required: true
+
+  - type: input
+    id: jeiu_version
+    attributes:
+      label: JEIU version
+      description: Enter the full version number or JAR filename, not just "latest".
+      placeholder: JEIunofficial-1.21.1-neoforge-19.54.0.426.jar
     validations:
       required: true
+
+  - type: input
+    id: minecraft_version
+    attributes:
+      label: Minecraft version
+      placeholder: 1.21.1
+    validations:
+      required: true
+
+  - type: input
+    id: loader_version
+    attributes:
+      label: Mod loader and version
+      description: Include both the loader name and its full version number.
+      placeholder: NeoForge 21.1.xxx or Forge 47.x.x
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Game environment
+      description: If the game fails to start, select the environment you intended to use.
+      options:
+        - Singleplayer
+        - Multiplayer server
+        - LAN multiplayer
+        - Other (describe in Additional information)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: crash_location
+    attributes:
+      label: Which side crashed?
+      description: Being disconnected from a server does not necessarily mean the client crashed. Select "Unknown" if unsure.
+      options:
+        - Client
+        - Server
+        - Both client and server
+        - Unknown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: crash_stage
+    attributes:
+      label: When did the crash occur?
+      options:
+        - Starting the game or server
+        - Loading or creating a world
+        - Connecting to a server
+        - During gameplay
+        - Leaving a world or shutting down
+        - Other or unknown (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Description and steps to reproduce
+      description: |
+        Describe what you were doing before the crash, including any relevant screen, item, recipe, cursor position, or keys pressed.
+        State whether it happens every time or intermittently. For startup failures, simply describe how you launched the game or server.
+        You can report intermittent crashes even without reliable reproduction steps.
+      placeholder: |
+        1. Open the recipe page for ... .
+        2. Click ... / hold ... while hovering over ... .
+        3. The client crashes every time / occasionally.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and crash report
+      description: |
+        Attach the crash report from crash-reports and logs/latest.log from the affected session, or provide links to them.
+        If no crash report was generated, provide latest.log. If neither file is available, explain why and include launcher output if available.
+        For server crashes, provide server logs. If both sides have errors, attach and label the client and server logs separately.
+        A launcher error dialog alone is not a substitute for logs. Direct attachments, ZIP files, and log links are accepted; Gist is not required.
+        Check attachments for private information before uploading. Redact anything you do not want to share while preserving the error context where possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: server_installation
+    attributes:
+      label: Server JEIU installation (optional)
+      description: For multiplayer, state whether JEIU is installed on the server and include its full version. Write "Unknown" if unsure. Leave blank for singleplayer.
+
+  - type: textarea
+    id: affected_mods
+    attributes:
+      label: Related mods and versions
+      description: List the mods involved and their versions, or provide your mod list if unsure. You do not need to identify which mod is responsible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: modpack
+    attributes:
+      label: Modpack information (optional)
+      description: Include the name, version, and download link. Note any added or removed mods, or changes to configs or recipes.
+
+  - type: dropdown
+    id: latest_version
+    attributes:
+      label: Have you tested the latest JEIU release for your Minecraft version and loader?
+      description: Updating your modpack is not required to submit a report.
+      options:
+        - Tested, the crash still occurs
+        - Tested, the crash no longer occurs
+        - Not tested or unsure
+
+  - type: textarea
+    id: comparison
+    attributes:
+      label: Comparison and troubleshooting results (optional)
+      description: |
+        If tested, describe what happens with official JEI, without JEIU, or with fewer mods installed. Include the versions used.
+        These tests are not required to submit a report. JEIU-specific features may not allow a direct comparison.
+
+  - type: textarea
+    id: additional_information
+    attributes:
+      label: Additional information and attachments (optional)
+      description: Include videos, relevant bookmark data or rule files, recent changes to your setup, or workarounds. Source code analysis is not required.
