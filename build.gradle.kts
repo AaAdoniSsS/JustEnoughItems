@@ -48,6 +48,11 @@ apply {
 
 repositories {
     mavenCentral()
+    maven("https://maven.blamejared.com") {
+        content {
+            includeGroup("mezz.jei")
+        }
+    }
 }
 // gradle.properties
 val curseHomepageUrl: String by extra
@@ -75,6 +80,7 @@ val modId: String by extra
 val modJavaVersion: String by extra
 val modName: String by extra
 val specificationVersion: String by extra
+val apiCompatibilityVersion: String by extra
 
 subprojects {
     //adds the build number to the end of the version string if on a build server
@@ -165,13 +171,19 @@ val apiCompatibilityReports = apiProjectPaths.associateWith { apiProjectPath ->
 
 apiProjectPaths.forEach { apiProjectPath ->
     val apiProject = project(apiProjectPath)
+    val apiModule = apiProject.name.removeSuffix("Api").lowercase()
+    val baseline = configurations.detachedConfiguration(
+        dependencies.create("mezz.jei:jei-$minecraftVersion-$apiModule-api:$apiCompatibilityVersion")
+    ).apply {
+        isTransitive = false
+    }
     apiProject.pluginManager.apply("net.neoforged.jarcompatibilitychecker")
     apiProject.pluginManager.withPlugin("java") {
         apiProject.tasks.named<CompatibilityTask>("checkJarCompatibility") {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
-            description = "Checks $apiProjectPath against the latest published API jar in the same major version."
+            description = "Checks $apiProjectPath against official JEI API $apiCompatibilityVersion."
             output.set(apiCompatibilityReports.getValue(apiProjectPath))
-            mavens.set(listOf("https://maven.blamejared.com"))
+            baseJar.set(rootProject.layout.file(providers.provider { baseline.singleFile }))
             // Match the previous CLI check and avoid loading the full Minecraft compile classpath.
             libraries.setFrom(emptyList<Any>())
             nonExtendableApiCheckMode.set(NonExtendableApiCheckMode.SKIP)
@@ -182,7 +194,7 @@ apiProjectPaths.forEach { apiProjectPath ->
 
 val checkApiCompatibility = tasks.register<ValidateApiCompatibilityReports>("checkApiCompatibility") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
-    description = "Checks all published JEI API jars for compatibility with the latest published API jars in the same major version."
+    description = "Checks all published JEI API jars for compatibility with official JEI API $apiCompatibilityVersion."
     dependsOn(apiProjectPaths.map { "$it:checkJarCompatibility" })
     reportFiles.from(apiCompatibilityReports.values)
     apiSourceFiles.from(apiProjectPaths.map { apiProjectPath ->
