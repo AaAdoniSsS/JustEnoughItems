@@ -18,8 +18,8 @@ public final class CollapsedItemOverlay implements IDrawable {
 	private static final int BACKGROUND_Y = -2;
 	private static final int FOREGROUND_X = -3;
 	private static final int FOREGROUND_Y = 1;
-	private static final float BACKGROUND_Z = -0.5F;
-	private static final float FOREGROUND_Z = 0.5F;
+	private static final float BACKGROUND_Z = -4F;
+	private static final float FOREGROUND_Z = 4F;
 	private final ITypedIngredient<?> foreground;
 	private final ITypedIngredient<?> background;
 
