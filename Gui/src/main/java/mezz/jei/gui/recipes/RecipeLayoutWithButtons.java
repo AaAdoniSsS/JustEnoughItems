@@ -126,19 +126,25 @@ public final class RecipeLayoutWithButtons<R> implements IRecipeLayoutWithButton
 
 	@Override
 	public int totalWidth() {
+		return totalWidth(0);
+	}
+
+	int totalWidth(int extraButtons) {
 		Rect2i area = recipeLayout.getRect();
 		Rect2i areaWithBorder = recipeLayout.getRectWithBorder();
 		int leftBorderWidth = area.getX() - areaWithBorder.getX();
 		int rightAreaWidth = areaWithBorder.getWidth() - leftBorderWidth;
 
-		int i = 0;
+		int buttonCount = extraButtons;
 		for (IconButton button : buttons) {
 			if (button.isVisible()) {
-				Rect2i buttonArea = recipeLayout.getSideButtonArea(i);
-				int buttonRight = buttonArea.getX() + buttonArea.getWidth();
-				rightAreaWidth = Math.max(buttonRight, rightAreaWidth);
-				i++;
+				buttonCount++;
 			}
+		}
+		for (int i = 0; i < buttonCount; i++) {
+			Rect2i buttonArea = recipeLayout.getSideButtonArea(i);
+			int buttonRight = buttonArea.getX() + buttonArea.getWidth();
+			rightAreaWidth = Math.max(buttonRight, rightAreaWidth);
 		}
 
 		return leftBorderWidth + rightAreaWidth;

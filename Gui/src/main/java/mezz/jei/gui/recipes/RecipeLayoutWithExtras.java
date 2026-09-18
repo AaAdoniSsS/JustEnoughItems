@@ -83,13 +83,7 @@ final class RecipeLayoutWithExtras<R> implements IRecipeLayoutWithButtons<R> {
 
 	@Override
 	public int totalWidth() {
-		int width = delegate.totalWidth();
-		if (favoriteButton != null && favoriteButton.isVisible()) {
-			Rect2i buttonArea = recipeLayout.getRecipeBookmarkButtonArea();
-			int leftBorder = recipeLayout.getRect().getX() - recipeLayout.getRectWithBorder().getX();
-			width = Math.max(width, leftBorder + buttonArea.getX() + buttonArea.getWidth());
-		}
-		return width;
+		return delegate.totalWidth(favoriteButton != null && favoriteButton.isVisible() ? 1 : 0);
 	}
 
 	@Override

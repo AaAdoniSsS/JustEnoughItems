@@ -74,7 +74,7 @@ public class RecipeGuiLayouts {
 		}
 
 		final int recipeWidth = layoutRect.getWidth();
-		final int recipeWidthWithButtons = recipeLayoutsWithButtons.getFirst().totalWidth();
+		final int recipeWidthWithButtons = getWidth();
 		final int buttonSpace = recipeWidthWithButtons - recipeWidth;
 
 		final int availableArea = layoutsArea.getWidth();
@@ -297,10 +297,9 @@ public class RecipeGuiLayouts {
 	}
 
 	public int getWidth() {
-		if (recipeLayoutsWithButtons.isEmpty()) {
-			return 0;
-		}
-		IRecipeLayoutWithButtons<?> first = this.recipeLayoutsWithButtons.getFirst();
-		return first.totalWidth();
+		return recipeLayoutsWithButtons.stream()
+			.mapToInt(IRecipeLayoutWithButtons::totalWidth)
+			.max()
+			.orElse(0);
 	}
 }
