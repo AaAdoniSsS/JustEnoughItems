@@ -7,7 +7,7 @@ import mezz.jei.api.runtime.config.IJeiConfigValueSerializer;
 import mezz.jei.common.config.IIngredientGridConfig;
 import mezz.jei.common.config.IngredientGridLayoutMode;
 import mezz.jei.common.config.IngredientGridNavigationMode;
-import mezz.jei.common.util.NavigationVisibility;
+import mezz.jei.common.config.NavigationVisibility;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;

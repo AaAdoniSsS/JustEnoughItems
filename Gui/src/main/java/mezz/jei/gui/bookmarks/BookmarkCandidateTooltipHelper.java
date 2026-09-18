@@ -14,7 +14,7 @@ public final class BookmarkCandidateTooltipHelper {
 
 	public static void addTo(JeiTooltip tooltip, BookmarkCandidateTooltipState state,
 		List<BookmarkIngredientKey> candidates, Supplier<IIngredientCandidateSource> source) {
-		if (!Internal.getJeiClientConfigs().getClientConfig().tagContentTooltipEnabled().getValue()) {
+		if (!Internal.getClientConfigs().getClientConfig().tagContentTooltipEnabled().getValue()) {
 			return;
 		}
 		state.getOrCreate(candidates).ifPresent(grid -> {

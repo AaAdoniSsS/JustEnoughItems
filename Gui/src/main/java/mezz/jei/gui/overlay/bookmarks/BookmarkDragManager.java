@@ -95,7 +95,7 @@ public class BookmarkDragManager {
 				return Optional.empty();
 			}
 
-			IClientConfig clientConfig = Internal.getJeiClientConfigs().getClientConfig();
+			IClientConfig clientConfig = Internal.getClientConfigs().getClientConfig();
 			if (!shouldStartBookmarkRearrangeDrag(Screen.hasShiftDown(), clientConfig.dragToRearrangeBookmarksEnabled().getValue())) {
 				stopDrag();
 				return Optional.empty();

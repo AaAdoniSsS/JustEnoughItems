@@ -85,7 +85,7 @@ public class RecipeFavoriteButton extends GuiIconToggleButton {
 			showFavoritePanel,
 			favoriteTreeBookmarkWriter,
 			inputSlotSelectionState,
-			Internal.getJeiClientConfigs().getClientConfig(),
+			Internal.getClientConfigs().getClientConfig(),
 			targetSelector,
 			focusedRecipe,
 			ingredientManager

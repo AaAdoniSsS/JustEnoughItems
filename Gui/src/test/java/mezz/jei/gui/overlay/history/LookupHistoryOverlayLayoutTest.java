@@ -3,7 +3,7 @@ package mezz.jei.gui.overlay.history;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.common.util.ImmutableRect2i;
-import mezz.jei.common.util.NavigationVisibility;
+import mezz.jei.common.config.NavigationVisibility;
 import mezz.jei.gui.overlay.ingredients.IngredientGridButtonNavigationLayout;
 import mezz.jei.gui.overlay.ingredients.IngredientGridConfigTestFixtures.TestGridConfig;
 import mezz.jei.gui.overlay.ingredients.IngredientGridLayout;

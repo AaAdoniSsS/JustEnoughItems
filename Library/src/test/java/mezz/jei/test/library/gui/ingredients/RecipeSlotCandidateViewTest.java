@@ -44,24 +44,24 @@ public class RecipeSlotCandidateViewTest {
 
 		((IRecipeSlotCandidateView) slot).setDisplayedCandidates(all.subList(1, 3));
 
-		var previousConfigs = mezz.jei.common.Internal.getOptionalJeiClientConfigs();
+		var previousConfigs = mezz.jei.common.Internal.getOptionalClientConfigs();
 		var cycling = new mezz.jei.common.config.file.ConfigValue<>("test", "cycling", true, mezz.jei.common.config.file.serializers.BooleanSerializer.INSTANCE);
 		var clientConfig = (mezz.jei.common.config.IClientConfig) java.lang.reflect.Proxy.newProxyInstance(
 			getClass().getClassLoader(), new Class<?>[]{mezz.jei.common.config.IClientConfig.class},
 			(proxy, method, args) -> cycling
 		);
-		var configs = (mezz.jei.common.config.IJeiClientConfigs) java.lang.reflect.Proxy.newProxyInstance(
-			getClass().getClassLoader(), new Class<?>[]{mezz.jei.common.config.IJeiClientConfigs.class},
+		var configs = (mezz.jei.common.config.IClientConfigs) java.lang.reflect.Proxy.newProxyInstance(
+			getClass().getClassLoader(), new Class<?>[]{mezz.jei.common.config.IClientConfigs.class},
 			(proxy, method, args) -> clientConfig
 		);
-		mezz.jei.common.Internal.setJeiClientConfigs(configs);
+		mezz.jei.common.Internal.setClientConfigs(configs);
 		try {
 			Assertions.assertEquals("supreme_crimson", slot.getDisplayedIngredient().orElseThrow().getIngredient());
 			Assertions.assertEquals(3, slot.getAllIngredients().count());
 			cycling.set(false);
 			Assertions.assertEquals("supreme_crimson", slot.getDisplayedIngredient().orElseThrow().getIngredient());
 		} finally {
-			mezz.jei.common.Internal.setJeiClientConfigs(previousConfigs.orElse(null));
+			mezz.jei.common.Internal.setClientConfigs(previousConfigs.orElse(null));
 		}
 	}
 

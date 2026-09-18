@@ -70,7 +70,7 @@ public record IngredientMatchInfo(
 	}
 
 	private static boolean includeBlockTags() {
-		return Internal.getJeiClientConfigs().getClientConfig().lookupBlockTagsEnabled().getValue();
+		return Internal.getClientConfigs().getClientConfig().lookupBlockTagsEnabled().getValue();
 	}
 
 	private static <T> Optional<IngredientMatchInfo> fromFluidIngredient(

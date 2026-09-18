@@ -13,7 +13,7 @@ import mezz.jei.common.config.file.ConfigSchemaBuilder;
 import mezz.jei.common.config.file.serializers.ListSerializer;
 import mezz.jei.common.config.file.serializers.EnumSerializer;
 import mezz.jei.common.search.GeneralizedSuffixTreeSearchStorage;
-import mezz.jei.common.search.SearchMode;
+import mezz.jei.common.config.SearchMode;
 import mezz.jei.common.search.SearchStorageBuilderAdapter;
 import mezz.jei.gui.filter.FilterTextSource;
 import mezz.jei.gui.ingredients.IListElementInfo;

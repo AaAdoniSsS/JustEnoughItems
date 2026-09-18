@@ -869,7 +869,7 @@ public final class RecipeTreeScreen extends Screen {
 		var recipesGui = runtime.getRecipesGui();
 		Screen previousParent = recipesGui.getParentScreen().orElse(null);
 		var roles = action == RecipeTreeInput.SHOW_RECIPE ? List.of(RecipeIngredientRole.OUTPUT) : List.of(RecipeIngredientRole.INPUT, RecipeIngredientRole.CATALYST);
-		var focusUtil = new FocusUtil(runtime.getJeiHelpers().getFocusFactory(), Internal.getJeiClientConfigs().getClientConfig(), ingredients);
+		var focusUtil = new FocusUtil(runtime.getJeiHelpers().getFocusFactory(), Internal.getClientConfigs().getClientConfig(), ingredients);
 		recipesGui.show(focusUtil.createFocuses(ingredient, roles));
 		// RecipesGui is a singleton: do not make it both our parent and our child after an R/U lookup.
 		if (minecraft.screen == recipesGui && parent == recipesGui) {

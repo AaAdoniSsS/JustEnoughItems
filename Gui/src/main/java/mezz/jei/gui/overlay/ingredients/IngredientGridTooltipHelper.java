@@ -12,7 +12,7 @@ import mezz.jei.common.gui.JeiTooltip;
 import mezz.jei.common.input.IInternalKeyMappings;
 import mezz.jei.common.util.SafeIngredientUtil;
 import mezz.jei.gui.compat.ExternalIngredientSearchHandlerRegistry;
-import mezz.jei.common.search.SearchMode;
+import mezz.jei.common.config.SearchMode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

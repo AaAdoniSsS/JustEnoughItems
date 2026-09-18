@@ -194,7 +194,7 @@ public class FavoriteRecipeElement<T> implements IElement<T> {
 	}
 
 	private void addRecipePreviewTooltip(JeiTooltip tooltip) {
-		IClientConfig clientConfig = Internal.getJeiClientConfigs().getClientConfig();
+		IClientConfig clientConfig = Internal.getClientConfigs().getClientConfig();
 		if (!clientConfig.bookmarkTooltipFeatures().getValue().contains(BookmarkTooltipFeature.PREVIEW)) {
 			return;
 		}

@@ -371,7 +371,7 @@ public class RecipeBookmarkElement<R, I> implements IElement<I> {
 
 	private IClientConfig getClientConfig() {
 		if (clientConfig == null) {
-			clientConfig = Internal.getJeiClientConfigs().getClientConfig();
+			clientConfig = Internal.getClientConfigs().getClientConfig();
 		}
 		return clientConfig;
 	}
