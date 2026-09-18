@@ -1,5 +1,7 @@
 package mezz.jei.test.gui.bookmarks;
 
+import mezz.jei.common.util.FluidAmountFormatter;
+import mezz.jei.gui.overlay.bookmarks.BookmarkAmountFormatter;
 import mezz.jei.gui.bookmarks.BookmarkDisplayEntry;
 import mezz.jei.gui.bookmarks.BookmarkGroupManager;
 import mezz.jei.gui.bookmarks.BookmarkItemMetadata;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Optional;
@@ -21,6 +24,18 @@ import java.util.OptionalInt;
 import java.util.Set;
 
 public class BookmarkVisualsTest {
+	@ParameterizedTest
+	@CsvSource({"0,1000,0", "1,1000,.001", "125,1000,.125", "999,1000,.999", "1000,1000,1", "1125,1000,1.125", "10125,81000,.125", "1,81000,.000012", "81000,81000,1", "9223372036854775807,1000,9223372036854775.807"})
+	public void formatsBuckets(long amount, long bucketVolume, String expected) {
+		Assertions.assertEquals(expected, FluidAmountFormatter.format(amount, bucketVolume));
+	}
+
+	@ParameterizedTest
+	@CsvSource({"125,.125", "1000,1B", "1125,1.125B", "1000000,1kB", "1000000000,1MB"})
+	public void formatsFluidUnits(long amount, String expected) {
+		Assertions.assertEquals(expected, BookmarkAmountFormatter.formatTypedAmount(amount, "mekanism.api.chemical.gas.GasStack"));
+	}
+
 	@ParameterizedTest
 	@ValueSource(ints = {1, 4})
 	public void showsBookmarkAmount(int amount) {
