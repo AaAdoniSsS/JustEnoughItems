@@ -132,6 +132,9 @@ public final class OverlayHelper {
 			true
 		);
 		if (collapsibleManager != null && collapsibleGridSource != null) {
+			var groupButton = new mezz.jei.gui.elements.IconButton(new mezz.jei.gui.collapsible.CollapsibleGroupButtonController(collapsibleManager));
+			groupButton.setRightClickEnabled(true);
+			ingredientListGridNavigation.setNavigationButton(groupButton);
 			CollapsibleGridSource activeCollapsibleGridSource = collapsibleGridSource;
 			CollapsibleSlotVisualsProvider collapsibleSlotVisualsProvider = new CollapsibleSlotVisualsProvider(
 				ingredientListGridNavigation::getAllSlots,
@@ -145,6 +148,8 @@ public final class OverlayHelper {
 				if (groupId != null) {
 					IElement<?> anchor = activeCollapsibleGridSource.getAnchorElementForGroup(groupId);
 					ingredientListGridNavigation.updateLayoutKeepingPageAnchorVisible(anchor);
+				} else {
+					ingredientListGridNavigation.updateLayoutToFirstPage();
 				}
 			});
 		}

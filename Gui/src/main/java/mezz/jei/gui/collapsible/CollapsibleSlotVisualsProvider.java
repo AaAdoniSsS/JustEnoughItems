@@ -1,6 +1,7 @@
 package mezz.jei.gui.collapsible;
 
 import mezz.jei.gui.bookmarks.BookmarkSlotBorder;
+import mezz.jei.common.config.CollapsibleColorConfig;
 import mezz.jei.gui.overlay.IngredientListSlotContext;
 import mezz.jei.gui.overlay.elements.IElement;
 import mezz.jei.gui.overlay.ingredients.IngredientListSlot;
@@ -68,7 +69,7 @@ public final class CollapsibleSlotVisualsProvider {
 		return Optional.of(new BookmarkSlotVisuals(
 			OptionalInt.of(backgroundColor),
 			OptionalInt.empty(),
-			collapsed ? Optional.of(String.valueOf(size)) : Optional.empty(),
+			collapsed && CollapsibleColorConfig.getShowGroupSize().getValue() ? Optional.of(String.valueOf(size)) : Optional.empty(),
 			OptionalInt.of(0xFFFFFFFF),
 			Optional.empty(),
 			OptionalInt.empty(),

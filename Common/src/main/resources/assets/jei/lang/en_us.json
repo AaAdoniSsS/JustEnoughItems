@@ -278,7 +278,11 @@
   "jei.config.default": "Default",
 
   "jei.config.client.collapsible": "Collapsible Groups",
-  "jei.config.client.collapsible.description": "Colors for collapsible ingredient groups.",
+  "jei.config.client.collapsible.description": "Appearance of collapsible ingredient groups.",
+  "jei.config.client.collapsible.showGroupSize": "Show Collapsed Group Size",
+  "jei.config.client.collapsible.showGroupSize.description": "Show the number of ingredients in the bottom-right corner of collapsed groups.",
+  "jei.collapsible.button": "G",
+  "jei.collapsible.button.tooltip": "Left-click to expand or collapse all groups. Right-click to collapse all groups.",
   "jei.config.client.collapsible.collapsedColor": "Collapsed Group Color",
   "jei.config.client.collapsible.collapsedColor.description": "Background color when collapsed, in 0xAARRGGBB format. AA is opacity: 00 is transparent and FF is opaque.",
   "jei.config.client.collapsible.expandedColor": "Expanded Group Color",

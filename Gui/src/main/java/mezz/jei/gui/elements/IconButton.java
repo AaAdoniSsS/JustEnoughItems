@@ -58,6 +58,10 @@ public final class IconButton {
 		this.controller.updateState(this.button);
 	}
 
+	public void setRightClickEnabled(boolean enabled) {
+		this.button.setRightClickEnabled(enabled);
+	}
+
 	public void drawTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 		if (isMouseOver(mouseX, mouseY)) {
 			JeiTooltip tooltip = new JeiTooltip();

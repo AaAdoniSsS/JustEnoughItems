@@ -280,6 +280,10 @@ public class IngredientGridWithNavigation implements IIngredientListOverlayConte
 		return controller;
 	}
 
+	public void setNavigationButton(mezz.jei.gui.elements.IconButton button) {
+		this.navigation.setExtraButton(button);
+	}
+
 	public int getFirstItemIndex() {
 		return this.controller.getFirstItemIndex();
 	}
@@ -316,6 +320,7 @@ public class IngredientGridWithNavigation implements IIngredientListOverlayConte
 		}
 		this.ghostIngredientDragManager.drawTooltips(minecraft, guiGraphics, mouseX, mouseY);
 		this.ingredientGrid.drawTooltips(minecraft, guiGraphics, mouseX, mouseY);
+		this.navigation.drawTooltips(guiGraphics, mouseX, mouseY);
 	}
 
 	@Override

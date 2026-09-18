@@ -22,6 +22,7 @@ class InternalIconButton extends Button implements IButtonState {
 	private IDrawable icon = DrawableBlank.EMPTY;
 	private boolean pressed = false;
 	private boolean forcePressed = false;
+	private boolean rightClickEnabled;
 
 	public InternalIconButton() {
 		super(0, 0, 0, 0, CommonComponents.EMPTY, b -> {}, Button.DEFAULT_NARRATION);
@@ -104,7 +105,11 @@ class InternalIconButton extends Button implements IButtonState {
 
 	@Override
 	public boolean isValidClickButton(int mouseButton) {
-		return super.isValidClickButton(mouseButton);
+		return super.isValidClickButton(mouseButton) || rightClickEnabled && mouseButton == 1;
+	}
+
+	public void setRightClickEnabled(boolean enabled) {
+		rightClickEnabled = enabled;
 	}
 
 	@Override

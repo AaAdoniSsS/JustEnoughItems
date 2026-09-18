@@ -4,6 +4,7 @@ import mezz.jei.api.runtime.config.IJeiConfigValueSerializer;
 import mezz.jei.common.config.file.ConfigCategoryBuilder;
 import mezz.jei.common.config.file.ConfigValue;
 import mezz.jei.common.config.file.serializers.DeserializeResult;
+import mezz.jei.common.config.file.serializers.BooleanSerializer;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -13,6 +14,7 @@ public final class CollapsibleColorConfig {
 	private static final ColorSerializer SERIALIZER = new ColorSerializer();
 	private static final ConfigValue<Integer> collapsedColor = createValue("collapsedColor");
 	private static final ConfigValue<Integer> expandedColor = createValue("expandedColor");
+	private static final ConfigValue<Boolean> showGroupSize = new ConfigValue<>("jei.config.client.collapsible", "showGroupSize", false, BooleanSerializer.INSTANCE);
 
 	private CollapsibleColorConfig() {}
 
@@ -23,6 +25,11 @@ public final class CollapsibleColorConfig {
 	static void register(ConfigCategoryBuilder category) {
 		category.addValue(collapsedColor);
 		category.addValue(expandedColor);
+		category.addValue(showGroupSize);
+	}
+
+	public static ConfigValue<Boolean> getShowGroupSize() {
+		return showGroupSize;
 	}
 
 	public static ConfigValue<Integer> getCollapsedColor() {

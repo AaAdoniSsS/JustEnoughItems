@@ -284,7 +284,11 @@
   "jei.config.default": "默认",
 
   "jei.config.client.collapsible": "折叠组",
-  "jei.config.client.collapsible.description": "材料折叠组的颜色设置。",
+  "jei.config.client.collapsible.description": "材料折叠组的外观设置。",
+  "jei.config.client.collapsible.showGroupSize": "显示折叠组物品数",
+  "jei.config.client.collapsible.showGroupSize.description": "在已折叠组的右下角显示组内物品数。",
+  "jei.collapsible.button": "组",
+  "jei.collapsible.button.tooltip": "左键展开或折叠所有组，右键折叠所有组。",
   "jei.config.client.collapsible.collapsedColor": "收起颜色",
   "jei.config.client.collapsible.collapsedColor.description": "收起时的背景颜色，格式为0xAARRGGBB。AA为不透明度：00完全透明，FF完全不透明。",
   "jei.config.client.collapsible.expandedColor": "展开颜色",

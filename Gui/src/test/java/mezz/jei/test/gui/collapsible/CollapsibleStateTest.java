@@ -33,6 +33,12 @@ public class CollapsibleStateTest {
 		Assertions.assertTrue(groups.stream().allMatch(g -> state.isExpanded(g.id())));
 		state.toggleAll(groups, null);
 		Assertions.assertTrue(groups.stream().noneMatch(g -> state.isExpanded(g.id())));
+		state.toggleGroup(groups.getFirst().id());
+		state.toggleAll(groups, null);
+		Assertions.assertTrue(state.toMap().isEmpty());
+		state.toggleAll(groups, true);
+		state.toggleAll(groups, false);
+		Assertions.assertTrue(state.toMap().isEmpty());
 	}
 
 	@Test

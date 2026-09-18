@@ -33,7 +33,18 @@ public class CollapsibleVisualsTest {
 			return List.of(slot);
 		}, settings::get);
 		var context = new IngredientListSlotContext(slot.getElement(), Optional.empty(), 0, -1, 0, -1, 1, 1, 1);
-		provider.apply(context).orElseThrow();
+		var count = mezz.jei.common.config.CollapsibleColorConfig.getShowGroupSize();
+		Assertions.assertFalse(count.getDefaultValue());
+		boolean previous = count.getValue();
+		try {
+			count.set(true);
+			Assertions.assertTrue(provider.apply(context).orElseThrow().amountText().isPresent());
+			count.set(false);
+			Assertions.assertTrue(provider.apply(context).orElseThrow().amountText().isEmpty());
+			Assertions.assertTrue(provider.apply(context).orElseThrow().border().isPresent());
+		} finally {
+			count.set(previous);
+		}
 		settings.set(new CollapsibleSettings(0x11223344, 0x55667788));
 		var border = provider.apply(context).flatMap(BookmarkSlotVisuals::border).orElseThrow();
 		Assertions.assertEquals(0x77223344, border.color());
