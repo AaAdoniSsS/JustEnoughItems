@@ -87,6 +87,13 @@ public class FileWatcherThread extends Thread {
 
 	public record DirectoryCallback(Path directory, Predicate<Path> filenameFilter, Runnable callback) {}
 
+	public synchronized void removeCallbacks(Set<Runnable> removed) {
+		callbacks.values().removeIf(removed::contains);
+		directoryCallbacks.removeIf(callback -> removed.contains(callback.callback()));
+		changedDirectoryCallbacks.removeAll(removed);
+		changedPaths.removeIf(path -> !callbacks.containsKey(path));
+	}
+
 	@Override
 	public void run() {
 		try (watchService) {

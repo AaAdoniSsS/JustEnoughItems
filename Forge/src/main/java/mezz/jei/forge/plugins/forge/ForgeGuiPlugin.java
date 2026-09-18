@@ -44,6 +44,7 @@ public class ForgeGuiPlugin implements IModPlugin {
 
 	@Override
 	public void onRuntimeUnavailable() {
+		mezz.jei.gui.chat.ChatRecipeTooltip.INSTANCE.onRuntimeStopped();
 		LOGGER.info("Stopping JEI GUI");
 		runtimeSubscriptions.clear();
 		resourceReloadHandler = null;

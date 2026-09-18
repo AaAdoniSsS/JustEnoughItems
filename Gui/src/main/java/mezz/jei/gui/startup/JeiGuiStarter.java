@@ -328,7 +328,7 @@ public class JeiGuiStarter {
 				recipePreferenceCandidateResolver.invalidateGeneratedFavorites();
 			}
 		);
-		Internal.getFileWatcher().addCallback(
+		Internal.getFileWatcher().addRuntimeCallback(
 			recipePreferenceConfig.getPath(),
 			recipePreferenceRulesReloadController::onConfigFileChanged
 		);
@@ -341,13 +341,13 @@ public class JeiGuiStarter {
 				minecraft::execute,
 				activeCollapsibleManager::reload
 			);
-			Internal.getFileWatcher().addDirectoryCallback(
+			Internal.getFileWatcher().addRuntimeDirectoryCallback(
 				collapsibleConfig.getDirectory(),
 				path -> path.getFileName().toString().endsWith(".txt"),
 				collapsibleRulesReloadController::onConfigFileChanged
 			);
 		}
-		Internal.getFileWatcher().addDirectoryCallback(
+		Internal.getFileWatcher().addRuntimeDirectoryCallback(
 			configData.configDir(),
 			path -> path.getFileName().toString().startsWith("recipe-preferences-"),
 			() -> configFileImporter.importFiles("recipe-preferences-", recipePreferenceConfig.getPath())

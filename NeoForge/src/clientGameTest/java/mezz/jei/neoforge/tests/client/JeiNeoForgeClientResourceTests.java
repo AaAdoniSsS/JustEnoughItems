@@ -2,6 +2,7 @@ package mezz.jei.neoforge.tests.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import mezz.jei.common.Internal;
+import mezz.jei.test.client.ClientTestUtil;
 import mezz.jei.test.lib.JUnitXmlTestReporter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

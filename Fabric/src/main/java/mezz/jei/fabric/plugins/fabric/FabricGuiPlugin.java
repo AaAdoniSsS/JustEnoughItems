@@ -56,6 +56,7 @@ public class FabricGuiPlugin implements IModPlugin {
 
 	@Override
 	public void onRuntimeUnavailable() {
+		mezz.jei.gui.chat.ChatRecipeTooltip.INSTANCE.onRuntimeStopped();
 		runtime = null;
 		resourceReloadHandler = null;
 		LOGGER.info("Stopping JEI GUI");

@@ -197,6 +197,9 @@ public final class Internal {
 
 	public static void onRuntimeStopped() {
 		closeRecipeGuiIfOpen();
+		if (fileWatcher != null) {
+			fileWatcher.clearRuntimeCallbacks();
+		}
 
 		if (clientRecipes != null) {
 			var connectionId = getRemoteConnectionId();

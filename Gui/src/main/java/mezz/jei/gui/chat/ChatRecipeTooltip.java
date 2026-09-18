@@ -200,6 +200,12 @@ public final class ChatRecipeTooltip {
 		}
 	}
 
+	public void onRuntimeStopped() {
+		clear();
+		shortcuts = null;
+		tagInputs = null;
+	}
+
 	public void clear() {
 		if (tagInputs != null) {
 			tagInputs.handleGuiChange();
